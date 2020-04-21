@@ -1,0 +1,43 @@
+<html>
+
+<head>
+<title> Home Page </title>
+</head>
+
+<body>
+	<h1>Search Person !</h1>
+
+	<form action="/search" method="POST">
+		<input type="text" name="name" id="input">
+		<button id="btn" type="submit"> Search </button>
+	</form>
+	<script>
+		
+		window.onload = function() {
+
+			const btn = document.querySelector('#btn');
+			const input = document.querySelector('#input');
+
+
+			btn.addEventListener('click', () => {
+				const person_name = input.value;
+
+				if(person_name.length >= 3)
+				{
+
+					// load some gif until response is recieved
+
+				}
+				else 
+				{
+					alert('please enter valid name');
+				}
+
+			})
+		}
+
+	</script>
+
+</body>
+
+</html>
