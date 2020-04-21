@@ -5,7 +5,7 @@ const cheerio = require('cheerio');
 
 function searchPerson(name, cb) {
 
-	console.log("searching name");
+	// console.log("searching name");
 
 	const url = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${name}&limit=1&namespace=0&format=json`;
 	https.get(url, (res) => {
@@ -18,9 +18,12 @@ function searchPerson(name, cb) {
 			console.log(body);
 
 			fetchContent(body, (err, data) => {
-				if(err) cb(err, null);
-
-				cb(null, data);
+				if(err)  {
+					cb(err, null);
+				}
+				else {
+					cb(null, data);
+				}
 			});
 
 		})
@@ -28,26 +31,38 @@ function searchPerson(name, cb) {
 }
 
 function fetchContent(body, cb) {
-	console.log("fetching content");
+	// console.log("fetching content");
 
 	//parsing url
 	let jsonData = JSON.parse(body);
 	const url = jsonData[jsonData.length-1][0];
 
-	https.get(url, (res) => {
-		let html = '';
-		res.on('data', (chunk) => {
-			html += chunk;
-		})
-		res.on('end', ()=> {
+	// console.log(url);
 
-			loadCheerio(html, (err, data) => {
-				if(err) cb(err, null);
-				cb(null, data);
+
+	if(url === undefined || url === null) {
+		cb("no person found, check your spelling or try full name", null);
+	}
+	else {
+		https.get(url, (res) => {
+			let html = '';
+			res.on('data', (chunk) => {
+				html += chunk;
+			})
+			res.on('end', ()=> {
+
+				loadCheerio(html, (err, data) => {
+					if(err)  {
+						cb(err, null);
+					}
+					else {
+						cb(null, data);
+					}
+				});
+
 			});
-
-		})
-	})
+		});
+	}
 }
 
 function loadCheerio(html, cb) {
@@ -65,9 +80,14 @@ function loadCheerio(html, cb) {
 	delete obj[''];
 	delete obj['Signature'];
 
-	console.log(obj);
-	cb(null, obj);
+	// console.log(obj);
+
+	if(Object.keys(obj).length === 0)
+		cb("no person found, check your spelling or try full name", null);
+	else
+		cb(null, obj);
 }
 
+// searchPerson("mohd fahad");
 
 exports.searchPerson = searchPerson;	

@@ -1,5 +1,3 @@
-const { parse } = require('querystring');
-
 const crawler = require('../crawler/script');
 
 exports.getIndexPage = (req, res, next) => {
@@ -9,15 +7,15 @@ exports.getIndexPage = (req, res, next) => {
 exports.searchPerson = (req, res, next) => {
 	const name = req.body.name;
 	if(name.length <= 0) 
-		return res.status(422).json({ "error" : "invalid name "});
+		return res.status(422).json({ "error" : "please enter a valid name"});
 
 	crawler.searchPerson(name, (err, data) => {
 		if(err) {
-			return res.status(500).json({
-				"error" : "something wrong happened"
+			res.status(500).json({
+				"error" : err
 			})
 		}
-
-		res.status(200).json(data);
+		else
+			res.status(200).json(data);
 	});
 }
